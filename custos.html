@@ -1,111 +1,172 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Custos Diários – Operação (Modo Crise)</title>  <style>
-    :root{
-      --bg:#0f1115;--card:#181b22;--text:#eaeaf0;--muted:#9aa0aa;
-      --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;--warn:#f39c12;
-    }
-    *{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-    body{margin:0;background:var(--bg);color:var(--text)}
-    header{padding:16px;text-align:center;border-bottom:1px solid #222}
-    header h1{margin:0;color:var(--accent)}
-    header p{margin:6px 0 0;font-size:.85rem;color:var(--muted)}
-    .crise{background:#2b0f14;color:#ffb3b3;border:1px solid #ff5c5c;padding:10px;border-radius:10px;text-align:center;font-weight:700}
-    main{max-width:480px;margin:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
-    .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-    h2{margin:0 0 10px;color:var(--accent)}
-    input{width:100%;padding:10px;border-radius:10px;border:none;background:#222634;color:var(--text);margin-bottom:8px}
-    button{width:100%;padding:10px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
-    .ok{color:var(--ok)}
-    .bad{color:var(--danger)}
-    ul{list-style:none;padding:0;margin:0}
-    li{padding:6px 0;border-bottom:1px solid #2a2e3d;font-size:.9rem}
-    footer{text-align:center;font-size:.75rem;color:var(--muted);padding:12px}
-  </style></head>
-<body><header>
-  <h1>Custos Diários</h1>
-  <p>Proteção automática de caixa</p>
-</header><main>  <div id="alertaCrise" style="display:none" class="crise">
-    ⚠️ MODO CRISE ATIVO – pagamentos bloqueados hoje
-  </div>  <div class="card">
-    <h2>Dados do Dia</h2>
-    <input id="faturamento" type="number" placeholder="Faturamento bruto do dia" />
-    <input id="km" type="number" placeholder="KM rodados hoje" />
-    <input id="custoExtra" type="number" placeholder="Custos extras (pedágio, taxas)" />
-    <button onclick="processar()">Processar Operação</button>
-  </div>  <div class="card">
-    <h2>Resultado do Dia</h2>
-    <ul id="resultado"></ul>
-  </div>  <div class="card">
-    <h2>IA – Avaliação Conservadora</h2>
-    <div id="ia"></div>
-  </div>  <div class="card">
-    <h2>Histórico (90 dias)</h2>
-    <ul id="historico"></ul>
-  </div></main><footer>
-  <a href="index.html" style="color:#f5c542;text-decoration:none">← Voltar ao Dashboard</a>
-</footer><script>
-const $ = id => document.getElementById(id);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custos Diários – App Financeiro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#f5c542;
+  --bg:#0d0d0d;
+  --text:#f4f4f4;
+  --card:#161616;
+  --border:#242424;
+  --green:#1DB954;
+  --red:#ff3b30;
+}
+body[data-theme="light"]{
+  --bg:#f4f4f4;
+  --text:#111;
+  --card:#ffffff;
+  --border:#ddd;
+}
+*{box-sizing:border-box;font-family:Inter}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  padding:80px 16px 150px;
+}
+
+.drawer-toggle,.theme-toggle{
+  position:fixed;top:15px;font-size:22px;color:var(--gold);cursor:pointer;z-index:20
+}
+.drawer-toggle{left:15px}
+.theme-toggle{right:15px}
+
+.drawer{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--card);border-right:1px solid var(--border);
+  padding-top:20px;transition:.3s;z-index:15
+}
+.drawer.open{left:0}
+.drawer a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;color:var(--text);
+  text-decoration:none;border-bottom:1px solid var(--border);
+  font-size:15px
+}
+
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:16px
+}
+
+h1,h3{color:var(--gold);margin-top:0}
+
+input,button{
+  width:100%;padding:12px;border-radius:10px;border:none;margin-bottom:8px
+}
+input{background:#222;color:var(--text)}
+button{background:var(--gold);color:#000;font-weight:700;cursor:pointer}
+
+.grid{
+  display:grid;grid-template-columns:1fr;gap:16px
+}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0
+}
+.bottom-nav a{color:var(--text);font-size:15px;text-decoration:none}
+.center-btn{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--gold);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-top:-28px
+}
+
+.alerta{
+  border:1px solid var(--red);
+  color:var(--red);
+  border-radius:14px;
+  padding:12px;
+  font-weight:700
+}
+</style>
+</head>
+<body>
+
+<div class="drawer-toggle" onclick="toggleDrawer()"><i class="fa fa-bars"></i></div>
+<div class="theme-toggle" onclick="toggleTheme()"><i class="fa fa-moon"></i></div>
+
+<nav class="drawer" id="drawer">
+  <a href="index.html"><i class="fa fa-house"></i> Dashboard</a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i> Custos Diários</a>
+  <a href="dividas.html"><i class="fa fa-file-invoice-dollar"></i> Dívidas</a>
+  <a href="veiculo.html"><i class="fa fa-car"></i> Veículo</a>
+  <a href="resumo.html"><i class="fa fa-file"></i> Resumo</a>
+</nav>
+
+<h1>Custos Diários</h1>
+
+<div id="alertaCrise" class="alerta" style="display:none">⚠️ MODO CRISE ATIVO – não pagar dívidas hoje</div>
+
+<div class="grid">
+
+  <div class="card">
+    <h3>Registro do Dia</h3>
+    <input id="faturamento" type="number" placeholder="Faturamento bruto do dia">
+    <input id="km" type="number" placeholder="KM rodados hoje">
+    <input id="extra" type="number" placeholder="Custos extras (pedágio etc)">
+    <button onclick="processar()">Processar Dia</button>
+  </div>
+
+  <div class="card">
+    <h3>Resultado</h3>
+    <div id="resultado">–</div>
+  </div>
+
+  <div class="card">
+    <h3>IA – Avaliação</h3>
+    <div id="ia">–</div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
+  <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
+  <a href="veiculo.html"><i class="fa fa-car"></i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i></a>
+</nav>
+
+<script>
+(function(){document.body.dataset.theme=localStorage.getItem('tema')||'dark'})();
+function toggleTheme(){const t=document.body.dataset.theme==='light'?'dark':'light';document.body.dataset.theme=t;localStorage.setItem('tema',t)}
+function toggleDrawer(){drawer.classList.toggle('open')}
 
 function processar(){
-  const cfg = JSON.parse(localStorage.getItem('cfg'));
-  if(!cfg) return alert('Configure o custo por KM no dashboard');
+  const bruto=Number(faturamento.value||0);
+  const kmRodado=Number(km.value||0);
+  const extraCusto=Number(extra.value||0);
+  const custoKm=Number(localStorage.getItem('custoKmVeiculo'))||0;
 
-  const bruto = Number(faturamento.value||0);
-  const kmRodado = Number(km.value||0);
-  const extra = Number(custoExtra.value||0);
+  const custoTotal=(kmRodado*custoKm)+extraCusto;
+  const liquido=bruto-custoTotal;
 
-  const custoKm = kmRodado * cfg.custoKm;
-  const custoTotal = custoKm + extra;
-  const liquido = bruto - custoTotal;
+  resultado.innerHTML=`<strong>R$ ${liquido.toFixed(2)}</strong>`;
 
-  resultado.innerHTML = '';
-  resultado.innerHTML += `<li>Custo por KM: R$ ${custoKm.toFixed(2)}</li>`;
-  resultado.innerHTML += `<li>Custos extras: R$ ${extra.toFixed(2)}</li>`;
-  resultado.innerHTML += `<li><strong>Resultado líquido: R$ ${liquido.toFixed(2)}</strong></li>`;
+  const crise=liquido<=0||liquido<150;
+  alertaCrise.style.display=crise?'block':'none';
 
-  const crise = liquido <= 0 || liquido < 150;
-  localStorage.setItem('modoCrise', crise ? 'true' : 'false');
-  document.getElementById('alertaCrise').style.display = crise ? 'block' : 'none';
-
-  gerarIA(bruto, custoTotal, liquido, kmRodado, crise);
-
-  const resumo = { data: new Date().toISOString(), liquido, ok: !crise, ia: ia.innerText, crise };
-  localStorage.setItem('ultimoResumo', JSON.stringify(resumo));
-
-  let hist = JSON.parse(localStorage.getItem('historico') || '[]');
-  hist.push({ data: resumo.data, bruto, km: kmRodado, custo: custoTotal, liquido, crise });
-  if(hist.length > 90) hist = hist.slice(hist.length - 90);
-  localStorage.setItem('historico', JSON.stringify(hist));
-
-  renderHistorico();
-}
-
-function gerarIA(bruto, custo, liquido, km, crise){
   let msg='';
-  const custoPerc = bruto>0 ? (custo/bruto)*100 : 100;
+  if(crise) msg='Dia crítico. Preserve caixa.';
+  else msg='Dia saudável. Continue conservador.';
+  ia.innerText=msg;
 
-  if(crise){
-    msg='Modo crise ativado. Hoje é proibido pagar dívidas ou assumir compromissos.';
-  } else if(custoPerc>60){
-    msg='Custo elevado. Amanhã priorize corridas mais rentáveis.';
-  } else {
-    msg='Dia saudável. Operação dentro do controle.';
-  }
-  ia.innerText = msg;
+  localStorage.setItem('ultimoResumo',JSON.stringify({liquido,ok:!crise,crise}));
 }
+</script>
 
-function renderHistorico(){
-  const ul = $('historico'); ul.innerHTML = '';
-  const hist = JSON.parse(localStorage.getItem('historico') || '[]').slice().reverse();
-  hist.forEach(d=>{
-    const data = new Date(d.data).toLocaleDateString('pt-BR');
-    ul.innerHTML += `<li>${data} • Líquido R$ ${d.liquido.toFixed(2)} ${d.crise?'⚠️':''}</li>`;
-  });
-}
-
-renderHistorico();
-</script></body>
+</body>
 </html>
