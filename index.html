@@ -8,7 +8,7 @@
 <style>
 :root{
   --bg:#0f1115;--card:#181b22;--text:#eaeaf0;--muted:#9aa0aa;
-  --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;
+  --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;--warn:#f39c12;
 }
 *{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
 body{margin:0;background:var(--bg);color:var(--text)}
@@ -95,6 +95,28 @@ main{
 }
 .ok{color:var(--ok)}
 .bad{color:var(--danger)}
+.warn{color:var(--warn)}
+
+input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:#222634;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:var(--accent);
+  color:#000;
+  font-weight:700;
+  cursor:pointer;
+}
 
 footer{
   text-align:center;
@@ -124,6 +146,7 @@ footer{
 
 <main>
 
+  <!-- STATUS DO DIA -->
   <div class="card">
     <h2>Hoje</h2>
     <div class="row"><span>Data</span><strong id="dataHoje"></strong></div>
@@ -131,14 +154,28 @@ footer{
     <div class="row"><span>Resultado</span><strong id="liquidoHoje">–</strong></div>
   </div>
 
+  <!-- SEMANA -->
   <div class="card">
     <h2>Semana Atual</h2>
     <div id="semana"></div>
   </div>
 
+  <!-- SIMULADOR -->
+  <div class="card">
+    <h2>Simulador • Vale Rodar Hoje?</h2>
+
+    <input id="kmPrevisto" type="number" placeholder="KM previstos para hoje" />
+    <input id="faturamentoPrevisto" type="number" placeholder="Faturamento esperado (R$)" />
+
+    <button onclick="simular()">Simular</button>
+
+    <div id="resultadoSimulacao" style="margin-top:10px"></div>
+  </div>
+
+  <!-- IA -->
   <div class="card">
     <h2>IA • Sugestão do Dia</h2>
-    <div id="iaSugestao">Insira dados hoje para receber recomendações.</div>
+    <div id="iaSugestao">Preencha a simulação para receber recomendações.</div>
   </div>
 
 </main>
@@ -151,6 +188,8 @@ const $ = id => document.getElementById(id);
 function toggleMenu(){
   menu.classList.toggle('active');
   overlay.classList.toggle('active');
+  document.body.style.overflow =
+    menu.classList.contains('active') ? 'hidden' : '';
 }
 
 $('dataHoje').innerText = new Date().toLocaleDateString('pt-BR');
@@ -171,9 +210,48 @@ $('dataHoje').innerText = new Date().toLocaleDateString('pt-BR');
   $('semana').innerText =
     seg.toLocaleDateString('pt-BR') + ' a ' +
     dom.toLocaleDateString('pt-BR');
-
-  if(resumo.ia) $('iaSugestao').innerText = resumo.ia;
 })();
+
+function simular(){
+  const km = Number(kmPrevisto.value);
+  const fat = Number(faturamentoPrevisto.value);
+  const custoKm = Number(localStorage.getItem('custoKmVeiculo'));
+
+  if(!custoKm || custoKm <= 0){
+    resultadoSimulacao.innerHTML =
+      '<span class="bad">Cadastre o custo do veículo antes.</span>';
+    return;
+  }
+
+  const custoDia = km * custoKm;
+  const lucro = fat - custoDia;
+
+  let status, classe, ia;
+
+  if(lucro <= 0){
+    status = '❌ Não vale rodar';
+    classe = 'bad';
+    ia = 'Rodar hoje gera prejuízo. Reduza KM ou busque corridas melhores.';
+  }else if(lucro < 100){
+    status = '⚠️ Atenção';
+    classe = 'warn';
+    ia = 'Margem baixa. Só rode se tiver alta demanda.';
+  }else{
+    status = '✅ Vale rodar';
+    classe = 'ok';
+    ia = 'Boa margem hoje. Priorize corridas longas.';
+  }
+
+  resultadoSimulacao.innerHTML = `
+    <div class="${classe}">
+      <strong>${status}</strong><br>
+      Custo do dia: R$ ${custoDia.toFixed(2)}<br>
+      Lucro estimado: R$ ${lucro.toFixed(2)}
+    </div>
+  `;
+
+  iaSugestao.innerText = ia;
+}
 </script>
 
 </body>
