@@ -127,13 +127,23 @@ function gerarIA(){
   if(media && media < 8) msg += 'Consumo elevado. Verifique pneus, filtros e alinhamento. ';
   else if(media && media > 12) msg += 'Bom consumo. Condução eficiente. ';
 
-  // ALERTAS DE MANUTENÇÃO POR KM
+  // ALERTAS E PREVISÃO DE MANUTENÇÃO
   const alertas = [];
+  const previsoes = [];
 
   if(v.km && v.km > 0){
-    if(v.km % 10000 >= 9000) alertas.push('Troca de óleo próxima ou atrasada.');
-    if(v.km % 40000 >= 38000) alertas.push('Verifique sistema de freios.');
-    if(v.km % 50000 >= 48000) alertas.push('Suspensão pode exigir revisão.');
+    if(v.km % 10000 >= 9000){
+      alertas.push('Troca de óleo próxima ou atrasada.');
+      previsoes.push('Previsão: R$ 250 a R$ 350 em breve (óleo + filtro).');
+    }
+    if(v.km % 40000 >= 38000){
+      alertas.push('Sistema de freios próximo do limite.');
+      previsoes.push('Previsão: R$ 600 a R$ 1.200 (pastilhas + discos).');
+    }
+    if(v.km % 50000 >= 48000){
+      alertas.push('Suspensão pode exigir revisão.');
+      previsoes.push('Previsão: R$ 1.500 a R$ 3.000 (amortecedores + buchas).');
+    }
   }
 
   const manut = desp.filter(d=>d.tipo==='manutencao').reduce((s,d)=>s+d.valor,0);
@@ -141,8 +151,14 @@ function gerarIA(){
 
   if(alertas.length){
     msg += ' ALERTAS: ' + alertas.join(' ');
-  } else {
-    msg += 'Nenhum alerta crítico de manutenção no momento.';
+  }
+
+  if(previsoes.length){
+    msg += ' PREVISÕES: ' + previsoes.join(' ');
+  }
+
+  if(!alertas.length && !previsoes.length){
+    msg += 'Nenhum custo relevante de manutenção previsto no curto prazo.';
   }
 
   ia.innerText = msg;
