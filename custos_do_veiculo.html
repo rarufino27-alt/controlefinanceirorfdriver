@@ -1,179 +1,199 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Custos do Veículo • Gestão por KM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custos do Veículo – App Financeiro</title>
 
-  <style>
-    :root{
-      --bg:#0f1115;--card:#181b22;--text:#eaeaf0;--muted:#9aa0aa;
-      --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;--warn:#f39c12;
-    }
-    *{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-    body{margin:0;background:var(--bg);color:var(--text)}
-    header{padding:16px;text-align:center;border-bottom:1px solid #222}
-    header h1{margin:0;color:var(--accent)}
-    header p{margin:6px 0 0;font-size:.85rem;color:var(--muted)}
-    main{max-width:1200px;margin:auto;padding:16px;display:grid;grid-template-columns:1fr;gap:16px}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-/* Tablets */
-@media (min-width: 600px){
-  main{grid-template-columns:1fr 1fr}
-  main > .card:nth-child(1){grid-column:1 / -1}
+<style>
+:root{
+  --gold:#f5c542;
+  --bg:#0d0d0d;
+  --text:#f4f4f4;
+  --card:#161616;
+  --border:#242424;
+  --green:#1DB954;
+  --red:#ff3b30;
+}
+body[data-theme="light"]{
+  --bg:#f4f4f4;
+  --text:#111;
+  --card:#ffffff;
+  --border:#ddd;
+}
+*{box-sizing:border-box;font-family:Inter}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  padding:80px 16px 150px;
 }
 
-/* Desktop */
-@media (min-width: 1024px){
-  main{grid-template-columns:repeat(3, 1fr)}
-  main > .card:nth-child(1){gri
-    .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-    h2{margin:0 0 10px;color:var(--accent)}
-    input,select{width:100%;padding:10px;border-radius:10px;border:none;background:#222634;color:var(--text);margin-bottom:8px}
-    button{width:100%;padding:10px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
-    .row{display:flex;justify-content:space-between;margin:6px 0}
-    ul{list-style:none;padding:0;margin:0}
-    li{padding:6px 0;border-bottom:1px solid #2a2e3d;font-size:.9rem}
-    .ok{color:var(--ok)}
-    .bad{color:var(--danger)}
-    footer{text-align:center;font-size:.75rem;color:var(--muted);padding:12px}
-  </style>
+.drawer-toggle,.theme-toggle{
+  position:fixed;top:15px;font-size:22px;color:var(--gold);cursor:pointer;z-index:20
+}
+.drawer-toggle{left:15px}
+.theme-toggle{right:15px}
+
+.drawer{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--card);border-right:1px solid var(--border);
+  padding-top:20px;transition:.3s;z-index:15
+}
+.drawer.open{left:0}
+.drawer a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;color:var(--text);
+  text-decoration:none;border-bottom:1px solid var(--border);
+  font-size:15px
+}
+
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:16px
+}
+
+h1,h3{color:var(--gold);margin-top:0}
+
+input,select,button{
+  width:100%;padding:12px;border-radius:10px;border:none;margin-bottom:8px
+}
+input,select{background:#222;color:var(--text)}
+button{background:var(--gold);color:#000;font-weight:700;cursor:pointer}
+
+.grid{
+  display:grid;grid-template-columns:1fr;gap:16px
+}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0
+}
+.bottom-nav a{color:var(--text);font-size:15px;text-decoration:none}
+.center-btn{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--gold);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-top:-28px
+}
+
+.alerta{border:1px solid var(--red);color:var(--red);border-radius:14px;padding:12px;font-weight:700}
+</style>
 </head>
 <body>
 
-<header>
-  <h1>Custos do Veículo</h1>
-  <p>Descubra o custo real por KM e antecipe gastos</p>
-</header>
+<div class="drawer-toggle" onclick="toggleDrawer()"><i class="fa fa-bars"></i></div>
+<div class="theme-toggle" onclick="toggleTheme()"><i class="fa fa-moon"></i></div>
 
-<main>
+<nav class="drawer" id="drawer">
+  <a href="index.html"><i class="fa fa-house"></i> Dashboard</a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i> Custos Diários</a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i> Custos do Veículo</a>
+  <a href="dividas.html"><i class="fa fa-file-invoice-dollar"></i> Dívidas</a>
+  <a href="resumo.html"><i class="fa fa-file"></i> Resumo</a>
+</nav>
 
-  <!-- DADOS DO VEÍCULO -->
+<h1>Custos do Veículo</h1>
+
+<div class="grid">
+
   <div class="card">
-    <h2>Veículo</h2>
-    <input id="marca" placeholder="Marca (ex: Chevrolet)" />
-    <input id="modelo" placeholder="Modelo (ex: Prisma)" />
-    <input id="ano" placeholder="Ano" />
-    <input id="kmAtual" type="number" placeholder="KM atual do veículo" />
-    <button onclick="salvarVeiculo()">Salvar Veículo</button>
+    <h3>Dados do Veículo</h3>
+    <input id="marca" placeholder="Marca">
+    <input id="modelo" placeholder="Modelo">
+    <input id="ano" placeholder="Ano">
+    <input id="kmAtual" type="number" placeholder="KM atual">
+    <button onclick="salvarVeiculo()">Salvar</button>
   </div>
 
-  <!-- CONSUMO DE COMBUSTÍVEL -->
   <div class="card">
-    <h2>Consumo de Combustível</h2>
-    <input id="kmRodado" type="number" placeholder="KM rodados no abastecimento" />
-    <input id="litros" type="number" placeholder="Litros abastecidos" />
-    <input id="valorComb" type="number" placeholder="Valor pago (R$)" />
-    <button onclick="registrarCombustivel()">Registrar Consumo</button>
-  </div>
-
-  <!-- DESPESAS DO VEÍCULO -->
-  <div class="card">
-    <h2>Despesas do Veículo</h2>
-    <select id="tipoDespesa">
-      <option value="manutencao">Manutenção</option>
-      <option value="preventiva">Preventiva</option>
+    <h3>Serviços / Manutenção</h3>
+    <select id="tipoServico">
+      <option value="preventiva">Manutenção preventiva</option>
+      <option value="corretiva">Manutenção corretiva</option>
       <option value="pneu">Pneus</option>
-      <option value="seguro">Seguro</option>
-      <option value="ipva">IPVA</option>
+      <option value="freio">Freio</option>
       <option value="outro">Outro</option>
     </select>
-    <input id="valorDespesa" type="number" placeholder="Valor da despesa" />
-    <input id="kmDespesa" type="number" placeholder="KM do veículo (opcional)" />
-    <button onclick="registrarDespesa()">Registrar Despesa</button>
-    <ul id="listaDespesas"></ul>
+    <input id="descricao" placeholder="Descrição">
+    <input id="valorServico" type="number" placeholder="Valor">
+    <input id="kmServico" type="number" placeholder="KM do veículo">
+    <input id="autonomia" type="number" placeholder="Autonomia (KM)">
+    <button onclick="registrarServico()">Registrar Serviço</button>
   </div>
 
-  <!-- RESUMO POR KM -->
   <div class="card">
-    <h2>Custo Real por KM</h2>
-    <div class="row"><span>Combustível / KM</span><strong id="combKm">–</strong></div>
-    <div class="row"><span>Despesas / KM</span><strong id="despKm">–</strong></div>
-    <div class="row"><span><strong>Custo total / KM</strong></span><strong id="totalKm">–</strong></div>
+    <h3>Pagamentos Veiculares</h3>
+    <select id="tipoPagamento">
+      <option value="ipva">IPVA</option>
+      <option value="seguro">Seguro</option>
+      <option value="licenciamento">Licenciamento</option>
+      <option value="outro">Outro</option>
+    </select>
+    <input id="valorPagamento" type="number" placeholder="Valor">
+    <input id="parcelas" type="number" placeholder="Parcelas">
+    <button onclick="registrarPagamento()">Registrar Pagamento</button>
   </div>
 
-  <!-- IA VEICULAR -->
   <div class="card">
-    <h2>IA • Diagnóstico do Veículo</h2>
-    <div id="ia"></div>
+    <h3>Custo por KM</h3>
+    <div id="custoKm">–</div>
   </div>
 
-</main>
+</div>
 
-<footer>
-  <a href="index.html" style="color:#f5c542;text-decoration:none">← Voltar ao Dashboard</a>
-</footer>
+<nav class="bottom-nav">
+  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
+  <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i></a>
+</nav>
 
 <script>
-const $ = id => document.getElementById(id);
-const getArr = k => JSON.parse(localStorage.getItem(k)||'[]');
-const setArr = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+(function(){document.body.dataset.theme=localStorage.getItem('tema')||'dark'})();
+function toggleTheme(){const t=document.body.dataset.theme==='light'?'dark':'light';document.body.dataset.theme=t;localStorage.setItem('tema',t)}
+function toggleDrawer(){drawer.classList.toggle('open')}
+
+const getArr=k=>JSON.parse(localStorage.getItem(k)||'[]');
+const setArr=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
 function salvarVeiculo(){
   const v={marca:marca.value,modelo:modelo.value,ano:ano.value,km:Number(kmAtual.value)};
-  localStorage.setItem('veiculo', JSON.stringify(v));
-  gerarIA();
+  localStorage.setItem('veiculo',JSON.stringify(v));
 }
 
-function registrarCombustivel(){
-  const c={km:Number(kmRodado.value),litros:Number(litros.value),valor:Number(valorComb.value)};
-  const arr=getArr('combustivel'); arr.push(c); setArr('combustivel',arr);
-  calcularKM(); gerarIA();
+function registrarServico(){
+  const kmIni=Number(kmServico.value);
+  const auto=Number(autonomia.value||0);
+  const kmFim=auto?kmIni+auto:null;
+  const s={tipo:tipoServico.value,desc:descricao.value,valor:Number(valorServico.value),kmIni,kmFim};
+  const arr=getArr('servicosVeiculo');arr.push(s);setArr('servicosVeiculo',arr);
+  calcularCustoKm();
 }
 
-function registrarDespesa(){
-  const d={tipo:tipoDespesa.value,valor:Number(valorDespesa.value),km:Number(kmDespesa.value||0)};
-  const arr=getArr('despVeiculo'); arr.push(d); setArr('despVeiculo',arr);
-  renderDespesas(); calcularKM(); gerarIA();
+function registrarPagamento(){
+  const p={tipo:tipoPagamento.value,valor:Number(valorPagamento.value),parcelas:Number(parcelas.value||1)};
+  const arr=getArr('pagamentosVeiculo');arr.push(p);setArr('pagamentosVeiculo',arr);
 }
 
-function renderDespesas(){
-  listaDespesas.innerHTML='';
-  getArr('despVeiculo').forEach(d=>{
-    listaDespesas.innerHTML+=`<li>${d.tipo} • R$ ${d.valor.toFixed(2)}</li>`;
-  });
-}
-
-function calcularKM(){
-  const comb=getArr('combustivel');
-  const desp=getArr('despVeiculo');
-
-  const kmTotal = comb.reduce((s,c)=>s+c.km,0);
-  const gastoComb = comb.reduce((s,c)=>s+c.valor,0);
-  const gastoDesp = desp.reduce((s,d)=>s+d.valor,0);
-
-  if(kmTotal>0){
-    const ckm = gastoComb/kmTotal;
-    const dkm = gastoDesp/kmTotal;
-    combKm.innerText='R$ '+ckm.toFixed(2);
-    despKm.innerText='R$ '+dkm.toFixed(2);
-    totalKm.innerText='R$ '+(ckm+dkm).toFixed(2);
+function calcularCustoKm(){
+  const serv=getArr('servicosVeiculo');
+  let km=0,valor=0;
+  serv.forEach(s=>{if(s.kmFim){km+=s.kmFim-s.kmIni;valor+=s.valor}});
+  if(km>0){
+    const c=valor/km;
+    custoKm.innerText='R$ '+c.toFixed(2);
+    localStorage.setItem('custoKmVeiculo',c.toFixed(4));
   }
 }
-
-function gerarIA(){
-  const v=JSON.parse(localStorage.getItem('veiculo')||'{}');
-  const comb=getArr('combustivel');
-  const desp=getArr('despVeiculo');
-
-  if(!v.modelo){ ia.innerText='Cadastre o veículo para análises precisas.'; return; }
-
-  let msg = `Veículo ${v.marca} ${v.modelo}. `;
-
-  const kmTotal = comb.reduce((s,c)=>s+c.km,0);
-  const litros = comb.reduce((s,c)=>s+c.litros,0);
-  const media = litros>0 ? kmTotal/litros : 0;
-
-  if(media && media < 8) msg += 'Consumo elevado. Verifique pneus, filtros e condução.';
-  else if(media && media > 12) msg += 'Bom consumo. Condução eficiente.';
-
-  const manut = desp.filter(d=>d.tipo==='manutencao').reduce((s,d)=>s+d.valor,0);
-  if(manut > 2000) msg += ' Gastos altos com manutenção. Avalie preventiva.';
-
-  ia.innerText = msg;
-}
-
-renderDespesas(); calcularKM(); gerarIA();
 </script>
 
 </body>
