@@ -53,17 +53,14 @@ body{
 
 .card,.kpi,.small{
   background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:16px;margin-bottom:16px
+  border-radius:80px;padding:30px;margin-bottom:16px
 }
 
-h1{color:var(--gold);margin-top:0}
+h1{color:var(--gold);margin-top:100;font-size:50px}
 
 .progress{height:10px;background:var(--border);border-radius:10px;overflow:hidden}
 .progress-bar{height:100%;background:var(--gold);width:0%}
 
-.grid{
-  display:grid;grid-template-columns:1fr;gap:16px
-}
 @media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
 
@@ -73,7 +70,7 @@ h1{color:var(--gold);margin-top:0}
   display:flex;justify-content:space-around;align-items:center;
   padding:8px 0
 }
-.bottom-nav a{color:var(--text);font-size:15px;text-decoration:none}
+.bottom-nav a{color:var(--text);font-size:30px;text-decoration:none}
 .center-btn{
   width:58px;height:58px;border-radius:50%;
   background:var(--gold);color:#000;
@@ -111,11 +108,11 @@ h1{color:var(--gold);margin-top:0}
 </div>
 
 <nav class="bottom-nav">
-  <a href="dividas.html"><i class="fa fa-file-invoice">Dívidas</i></a>
-  <a href="custos.html"><i class="fa fa-chart-line"></i>Custos</a>
+  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
   <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
-  <a href="custos_do_veiculo.html"><i class="fa fa-car">Veículo</i></a>
-  <a href="resumo.html"><i class="fa fa-file"></i>Relatório</a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i></a>
 </nav>
 
 <script>
