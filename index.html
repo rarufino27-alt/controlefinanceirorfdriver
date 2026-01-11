@@ -1,257 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard Financeiro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard – App Financeiro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#0f1115;--card:#181b22;--text:#eaeaf0;--muted:#9aa0aa;
-  --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;--warn:#f39c12;
+  --gold:#f5c542;
+  --bg:#0d0d0d;
+  --text:#f4f4f4;
+  --card:#161616;
+  --border:#242424;
+  --green:#1DB954;
+  --red:#ff3b30;
 }
-*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-body{margin:0;background:var(--bg);color:var(--text)}
-
-header{
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 16px;
-  border-bottom:1px solid #222;
+body[data-theme="light"]{
+  --bg:#f4f4f4;
+  --text:#111;
+  --card:#ffffff;
+  --border:#ddd;
 }
-header h1{
-  font-size:1rem;
-  color:var(--accent);
+*{box-sizing:border-box;font-family:Inter}
+body{
   margin:0;
-}
-.menu-btn{
-  font-size:1.4rem;
-  cursor:pointer;
-  color:var(--accent);
-}
-
-aside{
-  position:fixed;
-  top:0;left:-260px;
-  width:260px;
-  height:100%;
-  background:#12141b;
-  padding:16px;
-  transition:.3s;
-  z-index:10;
-}
-aside.active{left:0}
-aside h2{
-  color:var(--accent);
-  font-size:1rem;
-  margin-bottom:16px;
-}
-aside a{
-  display:block;
-  padding:12px;
-  margin-bottom:8px;
-  background:var(--card);
-  border-radius:10px;
-  text-decoration:none;
+  background:var(--bg);
   color:var(--text);
-  font-weight:600;
+  padding:80px 16px 150px;
 }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  z-index:9;
+.drawer-toggle,.theme-toggle{
+  position:fixed;top:15px;font-size:22px;color:var(--gold);cursor:pointer;z-index:20
 }
-.overlay.active{display:block}
+.drawer-toggle{left:15px}
+.theme-toggle{right:15px}
 
-main{
-  padding:16px;
-  max-width:480px;
-  margin:auto;
-  display:flex;
-  flex-direction:column;
-  gap:16px;
+.drawer{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--card);border-right:1px solid var(--border);
+  padding-top:20px;transition:.3s;z-index:15
 }
-
-.card{
-  background:var(--card);
-  border-radius:14px;
-  padding:16px;
-  box-shadow:0 8px 24px rgba(0,0,0,.35);
-}
-.card h2{
-  margin:0 0 10px;
-  font-size:.95rem;
-  color:var(--accent);
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  margin:6px 0;
-}
-.ok{color:var(--ok)}
-.bad{color:var(--danger)}
-.warn{color:var(--warn)}
-
-input{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  background:#222634;
-  color:var(--text);
-  margin-bottom:8px;
+.drawer.open{left:0}
+.drawer a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;color:var(--text);
+  text-decoration:none;border-bottom:1px solid var(--border);
+  font-size:15px
 }
 
-button{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  background:var(--accent);
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
+.card,.kpi,.small{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:16px
 }
 
-footer{
-  text-align:center;
-  font-size:.75rem;
-  color:var(--muted);
-  padding:12px;
+h1{color:var(--gold);margin-top:0}
+
+.progress{height:10px;background:var(--border);border-radius:10px;overflow:hidden}
+.progress-bar{height:100%;background:var(--gold);width:0%}
+
+.grid{
+  display:grid;grid-template-columns:1fr;gap:16px
+}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0
+}
+.bottom-nav a{color:var(--text);font-size:15px;text-decoration:none}
+.center-btn{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--gold);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-top:-28px
 }
 </style>
 </head>
 <body>
 
-<header>
-  <span class="menu-btn" onclick="toggleMenu()">☰</span>
-  <h1>Dashboard Financeiro</h1>
-</header>
+<div class="drawer-toggle" onclick="toggleDrawer()"><i class="fa fa-bars"></i></div>
+<div class="theme-toggle" onclick="toggleTheme()"><i class="fa fa-moon"></i></div>
 
-<aside id="menu">
-  <h2>Navegação</h2>
-  <a href="index.html">Dashboard</a>
-  <a href="dividas.html">Dívidas</a>
-  <a href="custos.html">Custos Diários</a>
-  <a href="custos_do_veiculo.html">Custos do Veículo</a>
-  <a href="resumo.html">Resumo</a>
-</aside>
+<nav class="drawer" id="drawer">
+  <a href="index.html"><i class="fa fa-house"></i> Dashboard</a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i> Custos Diários</a>
+  <a href="dividas.html"><i class="fa fa-file-invoice-dollar"></i> Dívidas</a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i> Veículo</a>
+  <a href="resumo.html"><i class="fa fa-file"></i> Resumo</a>
+</nav>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<h1>Dashboard</h1>
 
-<main>
+<div class="grid">
 
-  <!-- STATUS DO DIA -->
-  <div class="card">
-    <h2>Hoje</h2>
-    <div class="row"><span>Data</span><strong id="dataHoje"></strong></div>
-    <div class="row"><span>Status</span><strong id="statusHoje">–</strong></div>
-    <div class="row"><span>Resultado</span><strong id="liquidoHoje">–</strong></div>
+  <div class="kpi">
+    <div>Resultado do Último Dia</div>
+    <div id="lucroValor" style="font-size:32px;font-weight:700">R$ 0,00</div>
   </div>
 
-  <!-- SEMANA -->
-  <div class="card">
-    <h2>Semana Atual</h2>
-    <div id="semana"></div>
+  <div class="kpi">
+    <div>Status</div>
+    <div id="statusDia">–</div>
   </div>
 
-  <!-- SIMULADOR -->
   <div class="card">
-    <h2>Simulador • Vale Rodar Hoje?</h2>
-
-    <input id="kmPrevisto" type="number" placeholder="KM previstos para hoje" />
-    <input id="faturamentoPrevisto" type="number" placeholder="Faturamento esperado (R$)" />
-
-    <button onclick="simular()">Simular</button>
-
-    <div id="resultadoSimulacao" style="margin-top:10px"></div>
+    <h3>Modo Crise</h3>
+    <div id="crise">–</div>
   </div>
 
-  <!-- IA -->
   <div class="card">
-    <h2>IA • Sugestão do Dia</h2>
-    <div id="iaSugestao">Preencha a simulação para receber recomendações.</div>
+    <h3>Meta Diária</h3>
+    <div class="progress"><div class="progress-bar" id="meta"></div></div>
   </div>
 
-</main>
+</div>
 
-<footer>Dashboard Financeiro • Mobile First</footer>
+<nav class="bottom-nav">
+  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
+  <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i></a>
+</nav>
 
 <script>
-const $ = id => document.getElementById(id);
+(function(){document.body.dataset.theme=localStorage.getItem('tema')||'dark'})();
+function toggleTheme(){const t=document.body.dataset.theme==='light'?'dark':'light';document.body.dataset.theme=t;localStorage.setItem('tema',t)}
+function toggleDrawer(){drawer.classList.toggle('open')}
 
-function toggleMenu(){
-  menu.classList.toggle('active');
-  overlay.classList.toggle('active');
-  document.body.style.overflow =
-    menu.classList.contains('active') ? 'hidden' : '';
-}
-
-$('dataHoje').innerText = new Date().toLocaleDateString('pt-BR');
-
-(function(){
-  const hoje = new Date();
+(function atualizar(){
   const resumo = JSON.parse(localStorage.getItem('ultimoResumo')||'{}');
-
-  if(resumo.liquido !== undefined){
-    $('liquidoHoje').innerText = 'R$ ' + resumo.liquido.toFixed(2);
-    $('statusHoje').innerText = resumo.ok ? 'Sustentável' : 'Crítico';
-    $('statusHoje').className = resumo.ok ? 'ok' : 'bad';
+  if(resumo.liquido!==undefined){
+    lucroValor.innerText = resumo.liquido.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    statusDia.innerText = resumo.ok?'Sustentável':'Crítico';
+    statusDia.style.color = resumo.ok?'var(--green)':'var(--red)';
+    crise.innerText = resumo.crise?'ATIVO':'INATIVO';
+    crise.style.color = resumo.crise?'var(--red)':'var(--green)';
   }
-
-  const dow = hoje.getDay()||7;
-  const seg = new Date(hoje); seg.setDate(hoje.getDate()-dow+1);
-  const dom = new Date(seg); dom.setDate(seg.getDate()+6);
-  $('semana').innerText =
-    seg.toLocaleDateString('pt-BR') + ' a ' +
-    dom.toLocaleDateString('pt-BR');
+  const metaDia = 150;
+  const entradas = resumo.liquido>0?resumo.liquido:0;
+  meta.style.width = Math.min((entradas/metaDia)*100,100)+'%';
 })();
-
-function simular(){
-  const km = Number(kmPrevisto.value);
-  const fat = Number(faturamentoPrevisto.value);
-  const custoKm = Number(localStorage.getItem('custoKmVeiculo'));
-
-  if(!custoKm || custoKm <= 0){
-    resultadoSimulacao.innerHTML =
-      '<span class="bad">Cadastre o custo do veículo antes.</span>';
-    return;
-  }
-
-  const custoDia = km * custoKm;
-  const lucro = fat - custoDia;
-
-  let status, classe, ia;
-
-  if(lucro <= 0){
-    status = '❌ Não vale rodar';
-    classe = 'bad';
-    ia = 'Rodar hoje gera prejuízo. Reduza KM ou busque corridas melhores.';
-  }else if(lucro < 100){
-    status = '⚠️ Atenção';
-    classe = 'warn';
-    ia = 'Margem baixa. Só rode se tiver alta demanda.';
-  }else{
-    status = '✅ Vale rodar';
-    classe = 'ok';
-    ia = 'Boa margem hoje. Priorize corridas longas.';
-  }
-
-  resultadoSimulacao.innerHTML = `
-    <div class="${classe}">
-      <strong>${status}</strong><br>
-      Custo do dia: R$ ${custoDia.toFixed(2)}<br>
-      Lucro estimado: R$ ${lucro.toFixed(2)}
-    </div>
-  `;
-
-  iaSugestao.innerText = ia;
-}
 </script>
 
 </body>
