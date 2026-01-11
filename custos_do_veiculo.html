@@ -12,7 +12,7 @@
     header{padding:16px;text-align:center;border-bottom:1px solid #222}
     header h1{margin:0;color:var(--accent)}
     header p{margin:6px 0 0;font-size:.85rem;color:var(--muted)}
-    main{max-width:520px;margin:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+    main{max-width:540px;margin:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
     .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
     h2{margin:0 0 10px;color:var(--accent)}
     input,select{width:100%;padding:10px;border-radius:10px;border:none;background:#222634;color:var(--text);margin-bottom:8px}
@@ -20,48 +20,60 @@
     .row{display:flex;justify-content:space-between;margin:6px 0}
     ul{list-style:none;padding:0;margin:0}
     li{padding:6px 0;border-bottom:1px solid #2a2e3d;font-size:.9rem}
-    .ok{color:var(--ok)}
-    .bad{color:var(--danger)}
     footer{text-align:center;font-size:.75rem;color:var(--muted);padding:12px}
   </style></head>
 <body><header>
   <h1>Custos do Veículo</h1>
-  <p>Descubra o custo real por KM e antecipe gastos</p>
+  <p>Controle mecânico e financeiro integrado</p>
 </header><main>  <!-- DADOS DO VEÍCULO -->  <div class="card">
     <h2>Veículo</h2>
-    <input id="marca" placeholder="Marca (ex: Chevrolet)" />
-    <input id="modelo" placeholder="Modelo (ex: Prisma)" />
+    <input id="marca" placeholder="Marca" />
+    <input id="modelo" placeholder="Modelo" />
     <input id="ano" placeholder="Ano" />
     <input id="kmAtual" type="number" placeholder="KM atual do veículo" />
     <button onclick="salvarVeiculo()">Salvar Veículo</button>
-  </div>  <!-- CONSUMO DE COMBUSTÍVEL -->  <div class="card">
-    <h2>Consumo de Combustível</h2>
-    <input id="kmRodado" type="number" placeholder="KM rodados no abastecimento" />
-    <input id="litros" type="number" placeholder="Litros abastecidos" />
-    <input id="valorComb" type="number" placeholder="Valor pago (R$)" />
-    <button onclick="registrarCombustivel()">Registrar Consumo</button>
-  </div>  <!-- DESPESAS DO VEÍCULO -->  <div class="card">
-    <h2>Despesas do Veículo</h2>
-    <select id="tipoDespesa">
-      <option value="manutencao">Manutenção</option>
-      <option value="preventiva">Preventiva</option>
+  </div>  <!-- DESPESAS OPERACIONAIS / MECÂNICAS -->  <div class="card">
+    <h2>Despesas Mecânicas</h2>
+    <select id="tipoServico">
+      <option value="preventiva">Manutenção preventiva</option>
+      <option value="corretiva">Manutenção corretiva (descrição manual)</option>
       <option value="pneu">Pneus</option>
-      <option value="seguro">Seguro</option>
-      <option value="ipva">IPVA</option>
-      <option value="outro">Outro</option>
+      <option value="pastilha">Pastilha de freio</option>
+      <option value="oleo_freio">Óleo de freio</option>
+      <option value="oleo_cambio">Troca de óleo de câmbio automático</option>
+      <option value="outro">Outros</option>
     </select>
-    <input id="valorDespesa" type="number" placeholder="Valor da despesa" />
-    <input id="kmDespesa" type="number" placeholder="KM do veículo (opcional)" />
-    <button onclick="registrarDespesa()">Registrar Despesa</button>
-    <ul id="listaDespesas"></ul>
+    <input id="descricaoServico" placeholder="Descrição (se aplicável)" />
+    <input id="valorServico" type="number" placeholder="Valor pago no serviço" />
+    <input id="kmServico" type="number" placeholder="KM atual do veículo" />
+    <input id="autonomiaServico" type="number" placeholder="Autonomia do serviço (KM)" />
+    <button onclick="registrarServico()">Registrar Serviço</button>
+    <ul id="listaServicos"></ul>
+  </div>  <!-- DESPESAS DE PAGAMENTO VEICULAR -->  <div class="card">
+    <h2>Despesas de Pagamento Veicular</h2>
+    <select id="tipoPagamento">
+      <option value="ipva">IPVA</option>
+      <option value="seguro">Seguro</option>
+      <option value="vistoria_detran">Vistoria Detran</option>
+      <option value="vistoria_gnv">Vistoria GNV</option>
+      <option value="manutencao_gnv">Manutenção GNV</option>
+      <option value="reteste_gnv">Reteste cilindro GNV</option>
+      <option value="outro">Outros</option>
+    </select>
+    <input id="valorPagamento" type="number" placeholder="Valor pago" />
+    <select id="formaPagamento">
+      <option value="avista">À vista</option>
+      <option value="parcelado">Cartão (parcelado)</option>
+    </select>
+    <input id="parcelas" type="number" placeholder="Quantidade de parcelas (se parcelado)" />
+    <input id="vencimento" type="date" placeholder="Data do pagamento" />
+    <input id="proximoPagamento" type="date" placeholder="Próximo vencimento (mensal/anual)" />
+    <button onclick="registrarPagamentoVeicular()">Registrar Pagamento</button>
+    <ul id="listaPagamentos"></ul>
   </div>  <!-- RESUMO POR KM -->  <div class="card">
     <h2>Custo Real por KM</h2>
-    <div class="row"><span>Combustível / KM</span><strong id="combKm">–</strong></div>
-    <div class="row"><span>Despesas / KM</span><strong id="despKm">–</strong></div>
+    <div class="row"><span>Total serviços / KM</span><strong id="servKm">–</strong></div>
     <div class="row"><span><strong>Custo total / KM</strong></span><strong id="totalKm">–</strong></div>
-  </div>  <!-- IA VEICULAR -->  <div class="card">
-    <h2>IA • Diagnóstico do Veículo</h2>
-    <div id="ia"></div>
   </div></main><footer>
   <a href="index.html" style="color:#f5c542;text-decoration:none">← Voltar ao Dashboard</a>
 </footer><script>
@@ -72,98 +84,57 @@ const setArr = (k,v) => localStorage.setItem(k, JSON.stringify(v));
 function salvarVeiculo(){
   const v={marca:marca.value,modelo:modelo.value,ano:ano.value,km:Number(kmAtual.value)};
   localStorage.setItem('veiculo', JSON.stringify(v));
-  gerarIA();
 }
 
-function registrarCombustivel(){
-  const c={km:Number(kmRodado.value),litros:Number(litros.value),valor:Number(valorComb.value)};
-  const arr=getArr('combustivel'); arr.push(c); setArr('combustivel',arr);
-  calcularKM(); gerarIA();
+function registrarServico(){
+  const kmAtual = Number(kmServico.value);
+  const autonomia = Number(autonomiaServico.value);
+  const kmFim = autonomia ? kmAtual + autonomia : null;
+
+  const s={tipo:tipoServico.value,desc:descricaoServico.value,valor:Number(valorServico.value),kmInicio:kmAtual,kmFim};
+  const arr=getArr('servicosVeiculo'); arr.push(s); setArr('servicosVeiculo',arr);
+  renderServicos(); calcularKM();
 }
 
-function registrarDespesa(){
-  const d={tipo:tipoDespesa.value,valor:Number(valorDespesa.value),km:Number(kmDespesa.value||0)};
-  const arr=getArr('despVeiculo'); arr.push(d); setArr('despVeiculo',arr);
-  renderDespesas(); calcularKM(); gerarIA();
+function registrarPagamentoVeicular(){
+  const p={tipo:tipoPagamento.value,valor:Number(valorPagamento.value),forma:formaPagamento.value,parcelas:Number(parcelas.value||1),vencimento:vencimento.value,proximo:proximoPagamento.value};
+  const arr=getArr('pagamentosVeiculo'); arr.push(p); setArr('pagamentosVeiculo',arr);
+
+  if(p.forma==='parcelado'){
+    const div={descricao:`${p.tipo} veicular`,valor:p.valor/ p.parcelas,periodo:'mensal',parcelas:p.parcelas,inicio:p.vencimento};
+    const d=getArr('registros'); d.push(div); setArr('registros',d);
+  }
+
+  renderPagamentos();
 }
 
-function renderDespesas(){
-  listaDespesas.innerHTML='';
-  getArr('despVeiculo').forEach(d=>{
-    listaDespesas.innerHTML+=`<li>${d.tipo} • R$ ${d.valor.toFixed(2)}</li>`;
+function renderServicos(){
+  listaServicos.innerHTML='';
+  getArr('servicosVeiculo').forEach(s=>{
+    listaServicos.innerHTML+=`<li>${s.tipo} • R$ ${s.valor.toFixed(2)} • KM ${s.kmInicio}${s.kmFim?` → ${s.kmFim}`:''}</li>`;
+  });
+}
+
+function renderPagamentos(){
+  listaPagamentos.innerHTML='';
+  getArr('pagamentosVeiculo').forEach(p=>{
+    listaPagamentos.innerHTML+=`<li>${p.tipo} • R$ ${p.valor.toFixed(2)} • ${p.forma}</li>`;
   });
 }
 
 function calcularKM(){
-  const comb=getArr('combustivel');
-  const desp=getArr('despVeiculo');
-
-  const kmTotal = comb.reduce((s,c)=>s+c.km,0);
-  const gastoComb = comb.reduce((s,c)=>s+c.valor,0);
-  const gastoDesp = desp.reduce((s,d)=>s+d.valor,0);
+  const serv=getArr('servicosVeiculo');
+  const kmTotal=serv.reduce((s,x)=>x.kmFim? s+(x.kmFim-x.kmInicio):s,0);
+  const valorTotal=serv.reduce((s,x)=>s+x.valor,0);
 
   if(kmTotal>0){
-    const ckm = gastoComb/kmTotal;
-    const dkm = gastoDesp/kmTotal;
-    combKm.innerText='R$ '+ckm.toFixed(2);
-    despKm.innerText='R$ '+dkm.toFixed(2);
-    totalKm.innerText='R$ '+(ckm+dkm).toFixed(2);
+    const ckm=valorTotal/kmTotal;
+    servKm.innerText='R$ '+ckm.toFixed(2);
+    totalKm.innerText='R$ '+ckm.toFixed(2);
+    localStorage.setItem('custoKmVeiculo', ckm.toFixed(4));
   }
 }
 
-function gerarIA(){
-  const v=JSON.parse(localStorage.getItem('veiculo')||'{}');
-  const comb=getArr('combustivel');
-  const desp=getArr('despVeiculo');
-
-  if(!v.modelo){ ia.innerText='Cadastre o veículo para análises precisas.'; return; }
-
-  let msg = `Veículo ${v.marca} ${v.modelo}. `;
-
-  const kmTotal = comb.reduce((s,c)=>s+c.km,0);
-  const litros = comb.reduce((s,c)=>s+c.litros,0);
-  const media = litros>0 ? kmTotal/litros : 0;
-
-  if(media && media < 8) msg += 'Consumo elevado. Verifique pneus, filtros e alinhamento. ';
-  else if(media && media > 12) msg += 'Bom consumo. Condução eficiente. ';
-
-  // ALERTAS E PREVISÃO DE MANUTENÇÃO
-  const alertas = [];
-  const previsoes = [];
-
-  if(v.km && v.km > 0){
-    if(v.km % 10000 >= 9000){
-      alertas.push('Troca de óleo próxima ou atrasada.');
-      previsoes.push('Previsão: R$ 250 a R$ 350 em breve (óleo + filtro).');
-    }
-    if(v.km % 40000 >= 38000){
-      alertas.push('Sistema de freios próximo do limite.');
-      previsoes.push('Previsão: R$ 600 a R$ 1.200 (pastilhas + discos).');
-    }
-    if(v.km % 50000 >= 48000){
-      alertas.push('Suspensão pode exigir revisão.');
-      previsoes.push('Previsão: R$ 1.500 a R$ 3.000 (amortecedores + buchas).');
-    }
-  }
-
-  const manut = desp.filter(d=>d.tipo==='manutencao').reduce((s,d)=>s+d.valor,0);
-  if(manut > 2000) alertas.push('Gastos elevados com manutenção corretiva. Preventiva pode estar falhando.');
-
-  if(alertas.length){
-    msg += ' ALERTAS: ' + alertas.join(' ');
-  }
-
-  if(previsoes.length){
-    msg += ' PREVISÕES: ' + previsoes.join(' ');
-  }
-
-  if(!alertas.length && !previsoes.length){
-    msg += 'Nenhum custo relevante de manutenção previsto no curto prazo.';
-  }
-
-  ia.innerText = msg;
-}
-
-renderDespesas(); calcularKM(); gerarIA();
+renderServicos(); renderPagamentos(); calcularKM();
 </script></body>
 </html>
