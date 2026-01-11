@@ -1,115 +1,134 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App Financeiro – Dashboard</title>
-  <style>
-    :root {
-      --bg: #0f1115;
-      --card: #181b22;
-      --text: #eaeaf0;
-      --muted: #9aa0aa;
-      --accent: #f5c542;
-      --danger: #ff5c5c;
-      --ok: #2ecc71;
-      --warn: #f39c12;
-    }
-    * {
-      box-sizing: border-box;
-      font-family: Inter, Arial, sans-serif;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-    }
-    header {
-      padding: 18px;
-      text-align: center;
-      border-bottom: 1px solid #222;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.4rem;
-      color: var(--accent);
-    }
-    header p {
-      margin: 4px 0 0;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    nav {
-      display: flex;
-      gap: 10px;
-      padding: 12px;
-      justify-content: center;
-      border-bottom: 1px solid #222;
-    }
-    nav a {
-      flex: 1;
-      text-align: center;
-      text-decoration: none;
-      color: #000;
-      background: var(--accent);
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 700;
-    }
-    main {
-      max-width: 480px;
-      margin: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin: 6px 0;
-    }
-    .ok {
-      color: var(--ok);
-    }
-    .bad {
-      color: var(--danger);
-    }
-    footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--muted);
-      padding: 12px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Financeiro</title>
+
+<style>
+:root{
+  --bg:#0f1115;--card:#181b22;--text:#eaeaf0;--muted:#9aa0aa;
+  --accent:#f5c542;--danger:#ff5c5c;--ok:#2ecc71;
+}
+*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+
+header{
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid #222;
+}
+header h1{
+  font-size:1rem;
+  color:var(--accent);
+  margin:0;
+}
+.menu-btn{
+  font-size:1.4rem;
+  cursor:pointer;
+  color:var(--accent);
+}
+
+aside{
+  position:fixed;
+  top:0;left:-260px;
+  width:260px;
+  height:100%;
+  background:#12141b;
+  padding:16px;
+  transition:.3s;
+  z-index:10;
+}
+aside.active{left:0}
+aside h2{
+  color:var(--accent);
+  font-size:1rem;
+  margin-bottom:16px;
+}
+aside a{
+  display:block;
+  padding:12px;
+  margin-bottom:8px;
+  background:var(--card);
+  border-radius:10px;
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  z-index:9;
+}
+.overlay.active{display:block}
+
+main{
+  padding:16px;
+  max-width:480px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.card h2{
+  margin:0 0 10px;
+  font-size:.95rem;
+  color:var(--accent);
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+}
+.ok{color:var(--ok)}
+.bad{color:var(--danger)}
+
+footer{
+  text-align:center;
+  font-size:.75rem;
+  color:var(--muted);
+  padding:12px;
+}
+</style>
 </head>
 <body>
 
 <header>
+  <span class="menu-btn" onclick="toggleMenu()">☰</span>
   <h1>Dashboard Financeiro</h1>
-  <p>Visão geral • decisões rápidas • foco no dia</p>
 </header>
 
-<nav>
+<aside id="menu">
+  <h2>Navegação</h2>
+  <a href="index.html">Dashboard</a>
   <a href="dividas.html">Dívidas</a>
   <a href="custos.html">Custos Diários</a>
   <a href="custos_do_veiculo.html">Custos do Veículo</a>
   <a href="resumo.html">Resumo</a>
-</nav>
+</aside>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 <main>
 
   <div class="card">
     <h2>Hoje</h2>
     <div class="row"><span>Data</span><strong id="dataHoje"></strong></div>
-    <div class="row"><span>Status do dia</span><strong id="statusHoje">–</strong></div>
-    <div class="row"><span>Resultado líquido</span><strong id="liquidoHoje">–</strong></div>
+    <div class="row"><span>Status</span><strong id="statusHoje">–</strong></div>
+    <div class="row"><span>Resultado</span><strong id="liquidoHoje">–</strong></div>
   </div>
 
   <div class="card">
@@ -118,36 +137,42 @@
   </div>
 
   <div class="card">
-    <h2>IA – Sugestão do Dia</h2>
+    <h2>IA • Sugestão do Dia</h2>
     <div id="iaSugestao">Insira dados hoje para receber recomendações.</div>
   </div>
 
 </main>
 
-<footer>App Financeiro • estrutura modular</footer>
+<footer>Dashboard Financeiro • Mobile First</footer>
 
 <script>
 const $ = id => document.getElementById(id);
-const getArr = k => JSON.parse(localStorage.getItem(k)||'[]');
+
+function toggleMenu(){
+  menu.classList.toggle('active');
+  overlay.classList.toggle('active');
+}
 
 $('dataHoje').innerText = new Date().toLocaleDateString('pt-BR');
 
-(function carregarDashboard(){
+(function(){
   const hoje = new Date();
   const resumo = JSON.parse(localStorage.getItem('ultimoResumo')||'{}');
 
   if(resumo.liquido !== undefined){
     $('liquidoHoje').innerText = 'R$ ' + resumo.liquido.toFixed(2);
-    $('statusHoje').innerText = resumo.ok ? 'Sustentável' : 'Insuficiente';
+    $('statusHoje').innerText = resumo.ok ? 'Sustentável' : 'Crítico';
     $('statusHoje').className = resumo.ok ? 'ok' : 'bad';
   }
 
   const dow = hoje.getDay()||7;
   const seg = new Date(hoje); seg.setDate(hoje.getDate()-dow+1);
   const dom = new Date(seg); dom.setDate(seg.getDate()+6);
-  $('semana').innerText = seg.toLocaleDateString('pt-BR')+' a '+dom.toLocaleDateString('pt-BR');
+  $('semana').innerText =
+    seg.toLocaleDateString('pt-BR') + ' a ' +
+    dom.toLocaleDateString('pt-BR');
 
-  if(resumo.ia){ $('iaSugestao').innerText = resumo.ia; }
+  if(resumo.ia) $('iaSugestao').innerText = resumo.ia;
 })();
 </script>
 
