@@ -161,9 +161,12 @@ function verificarAlertasVencimento(){
     div.innerHTML = `<h2>⚠️ Alertas Veiculares</h2><ul>${alertas.map(a=>`<li>${a}</li>`).join('')}</ul>`;
     document.querySelector('main').prepend(div);
   }
-}
-}
+
 
 renderServicos(); renderPagamentos(); calcularKM(); verificarAlertasVencimento();
+renderServicos();
+renderPagamentos();
+calcularKM();
+verificarAlertasVencimento();
 </script></body>
 </html>
