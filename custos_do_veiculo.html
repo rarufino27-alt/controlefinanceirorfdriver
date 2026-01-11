@@ -135,6 +135,35 @@ function calcularKM(){
   }
 }
 
-renderServicos(); renderPagamentos(); calcularKM();
+function verificarAlertasVencimento(){
+  const hoje = new Date();
+  const pagamentos = getArr('pagamentosVeiculo');
+  const alertas = [];
+
+  pagamentos.forEach(p=>{
+    if(!p.proximo) return;
+    const venc = new Date(p.proximo);
+    const diffDias = Math.ceil((venc - hoje)/(1000*60*60*24));
+
+    if(diffDias <= 30 && diffDias >= 0){
+      alertas.push(`${p.tipo.toUpperCase()} vence em ${diffDias} dias (R$ ${p.valor.toFixed(2)})`);
+    }
+
+    if(diffDias < 0){
+      alertas.push(`${p.tipo.toUpperCase()} está VENCIDO (R$ ${p.valor.toFixed(2)})`);
+    }
+  });
+
+  if(alertas.length){
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.border = '1px solid var(--danger)';
+    div.innerHTML = `<h2>⚠️ Alertas Veiculares</h2><ul>${alertas.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+    document.querySelector('main').prepend(div);
+  }
+}
+}
+
+renderServicos(); renderPagamentos(); calcularKM(); verificarAlertasVencimento();
 </script></body>
 </html>
