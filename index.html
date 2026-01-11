@@ -33,7 +33,7 @@ body{
 }
 
 .drawer-toggle,.theme-toggle{
-  position:fixed;top:15px;font-size:22px;color:var(--gold);cursor:pointer;z-index:20
+  position:fixed;top:15px;font-size:40px;color:var(--gold);cursor:pointer;z-index:20
 }
 .drawer-toggle{left:15px}
 .theme-toggle{right:15px}
@@ -86,10 +86,10 @@ h1{color:var(--gold);margin-top:0}
 
 <div class="theme-toggle" onclick="toggleTheme()"><i class="fa fa-moon"></i></div>
 
-<h1>Dashboard</h1>
+<h1>Dividas & Despesas</h1>
 
   <div class="kpi">
-    <div>Resultado do Último Dia</div>
+    <div>Resultado Atual</div>
     <div id="lucroValor" style="font-size:32px;font-weight:700">R$ 0,00</div>
   </div>
 
@@ -111,11 +111,11 @@ h1{color:var(--gold);margin-top:0}
 </div>
 
 <nav class="bottom-nav">
-  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
-  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
+  <a href="dividas.html"><i class="fa fa-file-invoice">Dívidas</i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i>Custos</a>
   <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
-  <a href="custos_do_veiculo.html"><i class="fa fa-car"></i></a>
-  <a href="resumo.html"><i class="fa fa-file"></i></a>
+  <a href="custos_do_veiculo.html"><i class="fa fa-car">Veículo</i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i>Relatório</a>
 </nav>
 
 <script>
