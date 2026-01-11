@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Base Layout – App Financeiro</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"><style>
+:root{
+  --gold:#f5c542;
+  --bg:#0d0d0d;
+  --text:#f4f4f4;
+  --card:#161616;
+  --border:#242424;
+  --green:#1DB954;
+  --red:#ff3b30;
+}
+body[data-theme="light"]{
+  --bg:#f4f4f4;
+  --text:#111;
+  --card:#ffffff;
+  --border:#ddd;
+}
+*{box-sizing:border-box;font-family:Inter}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  padding:80px 16px 150px;
+}
+
+/* TOGGLES */
+.drawer-toggle,.theme-toggle{
+  position:fixed;top:15px;font-size:22px;color:var(--gold);cursor:pointer;z-index:20
+}
+.drawer-toggle{left:15px}
+.theme-toggle{right:15px}
+
+/* DRAWER */
+.drawer{
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:var(--card);border-right:1px solid var(--border);
+  padding-top:20px;transition:.3s;z-index:15
+}
+.drawer.open{left:0}
+.drawer a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;color:var(--text);
+  text-decoration:none;border-bottom:1px solid var(--border);
+  font-size:15px
+}
+
+/* COMPONENTES */
+.card,.kpi,.small{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px
+}
+
+h1,h2,h3{color:var(--gold);margin-top:0}
+
+input,select,button{
+  width:100%;padding:12px;border-radius:10px;
+  border:none;margin-bottom:8px;font-size:14px
+}
+input,select{background:#222;color:var(--text)}
+button{background:var(--gold);color:#000;font-weight:700;cursor:pointer}
+
+.row{display:flex;justify-content:space-between}
+
+/* GRID RESPONSIVO */
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px
+}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+/* NAV INFERIOR */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0
+}
+.bottom-nav a{color:var(--text);font-size:15px;text-decoration:none}
+.center-btn{
+  width:58px;height:58px;border-radius:50%;
+  background:var(--gold);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-top:-28px
+}
+</style></head>
+<body><div class="drawer-toggle" onclick="toggleDrawer()"><i class="fa fa-bars"></i></div>
+<div class="theme-toggle" onclick="toggleTheme()"><i class="fa fa-moon"></i></div><nav class="drawer" id="drawer">
+  <a href="index.html"><i class="fa fa-house"></i> Dashboard</a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i> Custos Diários</a>
+  <a href="dividas.html"><i class="fa fa-file-invoice-dollar"></i> Dívidas</a>
+  <a href="veiculo.html"><i class="fa fa-car"></i> Veículo</a>
+  <a href="resumo.html"><i class="fa fa-file"></i> Resumo</a>
+</nav><h1>Título da Página</h1><div class="grid">
+  <div class="card">Conteúdo 1</div>
+  <div class="card">Conteúdo 2</div>
+  <div class="card">Conteúdo 3</div>
+</div><nav class="bottom-nav">
+  <a href="dividas.html"><i class="fa fa-file-invoice"></i></a>
+  <a href="custos.html"><i class="fa fa-chart-line"></i></a>
+  <a href="index.html" class="center-btn"><i class="fa fa-house"></i></a>
+  <a href="veiculo.html"><i class="fa fa-car"></i></a>
+  <a href="resumo.html"><i class="fa fa-file"></i></a>
+</nav><script>
+(function(){document.body.dataset.theme=localStorage.getItem('tema')||'dark'})();
+function toggleTheme(){
+ const t=document.body.dataset.theme==='light'?'dark':'light';
+ document.body.dataset.theme=t;localStorage.setItem('tema',t);
+}
+function toggleDrawer(){drawer.classList.toggle('open')}
+</script></body>
+</html>
