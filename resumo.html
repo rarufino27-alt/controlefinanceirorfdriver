@@ -28,6 +28,9 @@
     <h2>Último Dia</h2>
     <div class="row"><span>Resultado líquido</span><strong id="diaLiquido">–</strong></div>
     <div class="row"><span>Status</span><strong id="diaStatus">–</strong></div>
+  </div>  <div id="alerta" class="card" style="display:none;border:1px solid var(--danger)">
+    <h2>⚠️ Alerta Inteligente</h2>
+    <div id="msgAlerta"></div>
   </div>  <div class="card">
     <h2>Tendência – Últimos Dias</h2>
     <canvas id="grafico"></canvas>
@@ -75,8 +78,8 @@ dados.forEach((d,i)=>{
 // IA estratégica
 let msg = '';
 const diasCrise = dados.filter(d=>d.crise).length;
-if(diasCrise > dados.length/2){
-  msg = 'A maioria dos últimos dias foi negativa. Prioridade absoluta é reduzir custo e proteger caixa.';
+if(diasCrise >= 3){
+  msg = 'Sequência crítica detectada. Reduza drasticamente custos e evite qualquer compromisso financeiro.';
 } else if(resumo.ok){
   msg = 'Tendência positiva recente. Continue conservador e avance com disciplina.';
 } else {
@@ -84,5 +87,12 @@ if(diasCrise > dados.length/2){
 }
 
 document.getElementById('ia').innerText = msg;
+
+// Alertas inteligentes
+if(diasCrise >= 3){
+  const a = document.getElementById('alerta');
+  a.style.display = 'block';
+  document.getElementById('msgAlerta').innerText = 'Foram detectados 3 ou mais dias seguidos em modo crise. Recomenda-se PAUSAR pagamentos, reduzir operação e reavaliar rotas e horários.';
+}
 </script></body>
 </html>
